@@ -1,0 +1,130 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static "css/products.css" %}" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>products | dashboard</title>
+  </head>
+  <body id="main-content1">
+    <div class="add-btn">
+      <a href="{% url 'product_create' %}">
+        <button type="button" class="button">
+          <span class="button__text">Add Product</span>
+          <span class="button__icon"
+            ><svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke-linejoin="round"
+              stroke-linecap="round"
+              stroke="currentColor"
+              height="24"
+              fill="none"
+              class="svg"
+            >
+              <line y2="19" y1="5" x2="12" x1="12"></line>
+              <line y2="12" y1="12" x2="19" x1="5"></line>
+            </svg>
+          </span>
+        </button>
+      </a>
+    </div>
+    <div class="display">
+      <div class="container">
+        <h2>Products</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Product Name</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Sold</th>
+              <th>Image</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for product in products %}
+            <tr>
+              <td>{{ product.name }}</td>
+              <td>{{ product.category }}</td>
+              <td>{{ product.price }}</td>
+              <td>{{ product.stock }}</td>
+              <td>{{ product.sold }}</td>
+              <td>
+                {% if product.image %}
+                <img
+                  src="{{ product.image.url }}"
+                  alt="{{ product.name }}"
+                  style="width: 40px; height: 50px"
+                />
+                {% else %} No Image {% endif %}
+              </td>
+              <td>
+                <a href="{% url 'product_edit' product.id %}" class="link">
+                  <img src="{% static "images/edit.svg" %}" alt="" class="icons">
+                </a>
+                <a href="" class="link" onclick="loadContent('viewProduct')">
+                  <img src="{% static "images/view.svg" %}" alt="" class="icons"  onclick="loadContent('viewProduct')">
+                </a>
+                <a href="{% url 'product_delete' product.id %}" class="link">
+                  <img src="{% static "images/delete.svg" %}" alt="" class="icons">
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+  
+        </table>
+
+        <div id="pagination">
+          <!-- Pagination buttons will be inserted here -->
+        </div>
+      </div>
+    </div>
+  <script src="{% static "js/products.js" %}">
+    <script>
+
+      function loadContent(page) {
+        let url = '';
+
+        switch(page) {
+            case 'dashboard':
+              url = '{% url "dash" %}';
+              break;
+            case 'role':
+                url = 'role.html';
+                break;
+            case 'products':
+                url = '{% url "product_list" %}';  
+                break;
+            case 'viewProduct':
+                url = '{% url "product_create" %}';
+                break;
+            case 'orders':
+                url = 'orders.html';
+                break;
+            default:
+                url = 'dashboard-content.html';
+                break;
+        }
+
+        $.ajax({
+            url: url,
+            success: function(response) {
+                $('#main-content1').html(response);
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', status, error);
+            }
+        });
+    }
+      </script>
+  </script>
+  </body>
+</html>
